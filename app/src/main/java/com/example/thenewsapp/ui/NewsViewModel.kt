@@ -42,14 +42,22 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     private fun handleHeadlinesResponse(response: Response<NewsResponse>): Resource<NewsResponse>{
         if (response.isSuccessful){
             response.body()?.let { resultResponse ->
+                val filteredArticles = resultResponse.articles.filter { it.urlToImage != null && it.urlToImage != "" }
+
+                filteredArticles.forEach { article ->
+                    if (article.source.id == null) {
+                        article.source.id = ""
+                    }
+                }
+
                 headlinesPage++
                 if (headlinesResponse == null){
-                    headlinesResponse = resultResponse
+                    headlinesResponse = resultResponse.copy(articles = filteredArticles.toMutableList())
                 } else{
                     val oldArticles = headlinesResponse?.articles
-                    val newArticles = resultResponse.articles
-                    oldArticles?.addAll(newArticles)
+                    oldArticles?.addAll(filteredArticles)
                 }
+
                 return Resource.Success(headlinesResponse ?: resultResponse)
             }
         }
