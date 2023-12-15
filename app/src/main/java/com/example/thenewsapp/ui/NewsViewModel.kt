@@ -67,15 +67,24 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     private fun handleSearchNewsResponse(response: Response<NewsResponse>) : Resource<NewsResponse> {
         if(response.isSuccessful) {
             response.body()?.let { resultResponse ->
+                // Filter out articles without images
+                val filteredArticles = resultResponse.articles.filter { it.urlToImage != null && it.urlToImage != "" }
+
+                // Set source.id to empty string if it's missing
+                filteredArticles.forEach { article ->
+                    if (article.source.id == null) {
+                        article.source.id = ""
+                    }
+                }
+
                 if(searchNewsResponse == null || newSearchQuery != oldSearchQuery) {
                     searchNewsPage = 1
                     oldSearchQuery = newSearchQuery
-                    searchNewsResponse = resultResponse
+                    searchNewsResponse = resultResponse.copy(articles = filteredArticles.toMutableList())
                 } else {
                     searchNewsPage++
                     val oldArticles = searchNewsResponse?.articles
-                    val newArticles = resultResponse.articles
-                    oldArticles?.addAll(newArticles)
+                    oldArticles?.addAll(filteredArticles)
                 }
                 return Resource.Success(searchNewsResponse ?: resultResponse)
             }
