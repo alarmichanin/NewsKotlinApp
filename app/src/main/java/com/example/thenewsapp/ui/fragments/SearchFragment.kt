@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.Button
 import android.widget.TextView
@@ -27,6 +26,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
+import com.example.thenewsapp.adapters.CategoryAdapter
+import com.example.thenewsapp.adapters.CategoryClickListener
+import com.example.thenewsapp.models.Category
 import com.example.thenewsapp.util.Resource
 
 
@@ -53,6 +55,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         newsViewModel = (activity as NewsActivity).newsViewModel
         setupSearchRecycler()
+        setupCategoriesRecycler()
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
@@ -62,13 +65,18 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         var job: Job? = null
-        binding.searchEdit.addTextChangedListener(){ editable ->
+        binding.searchEdit.addTextChangedListener { editable ->
             job?.cancel()
             job = MainScope().launch {
                 delay(SEARCH_NEWS_TIME_DELAY)
                 editable?.let{
                     if (editable.toString().isNotEmpty()){
+                        binding.recyclerSearch.visibility = View.VISIBLE
                         newsViewModel.searchNews(editable.toString())
+                        binding.categoriesList.visibility = View.GONE
+                    } else {
+                        binding.categoriesList.visibility = View.VISIBLE
+                        binding.recyclerSearch.visibility = View.GONE
                     }
                 }
             }
@@ -174,6 +182,34 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
             addOnScrollListener(this@SearchFragment.scrollListener)
+        }
+    }
+
+    private fun setupCategoriesRecycler() {
+        binding.recyclerSearch.visibility = View.GONE
+
+        val categories = arrayListOf(
+            Category("business", R.drawable.business_24),
+            Category("entertainment", R.drawable.baseline_newspaper_24),
+            Category("general", R.drawable.baseline_public_24),
+            Category("health", R.drawable.baseline_health_and_safety_24),
+            Category("science", R.drawable.baseline_science_24),
+            Category("sports", R.drawable.sports_icon_24),
+            Category("technology", R.drawable.baseline_build_24),
+        )
+
+        val categoriesAdapter = CategoryAdapter(categories)
+        categoriesAdapter.setCategoryClickListener(object : CategoryClickListener {
+            override fun onCategoryClick(categoryName: String) {
+                binding.categoriesList.visibility = View.GONE
+                binding.recyclerSearch.visibility = View.VISIBLE
+                newsViewModel.getHeadlinesByCategory("us", categoryName)
+            }
+        })
+
+        binding.categoriesList.apply {
+            layoutManager = LinearLayoutManager(activity)
+            adapter = categoriesAdapter
         }
     }
 }
