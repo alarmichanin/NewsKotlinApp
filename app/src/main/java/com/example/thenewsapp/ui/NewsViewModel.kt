@@ -24,6 +24,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var searchNewsPage = 1
     var searchNewsResponse: NewsResponse? = null
+    var isSearchByCategory: Boolean = false
     var newSearchQuery: String? = null
     var oldSearchQuery: String? = null
 
@@ -33,6 +34,10 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
 
     fun getHeadlines(countryCode: String) = viewModelScope.launch {
         headlinesInternet(countryCode)
+    }
+
+    fun getHeadlinesByCategory(countryCode: String, categoryName: String) = viewModelScope.launch {
+        searchNewsByCategory(countryCode, categoryName)
     }
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
@@ -46,7 +51,10 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
 
                 filteredArticles.forEach { article ->
                     if (article.source.id == null) {
-                        article.source.id = ""
+                        article.source.id = "Unknown"
+                    }
+                    if (article.author == null) {
+                        article.author = "Unknown"
                     }
                 }
 
@@ -73,11 +81,14 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
                 // Set source.id to empty string if it's missing
                 filteredArticles.forEach { article ->
                     if (article.source.id == null) {
-                        article.source.id = ""
+                        article.source.id = "Unknown"
+                    }
+                    if (article.author == null) {
+                        article.author = "Unknown"
                     }
                 }
 
-                if(searchNewsResponse == null || newSearchQuery != oldSearchQuery) {
+                if(isSearchByCategory || searchNewsResponse == null || newSearchQuery != oldSearchQuery) {
                     searchNewsPage = 1
                     oldSearchQuery = newSearchQuery
                     searchNewsResponse = resultResponse.copy(articles = filteredArticles.toMutableList())
@@ -133,11 +144,30 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     }
 
     private suspend fun searchNewsInternet(searchQuery: String) {
+        isSearchByCategory = false
         newSearchQuery = searchQuery
         searchNews.postValue(Resource.Loading())
         try {
             if(internetConnection(this.getApplication())) {
                 val response = newsRepository.searchNews(searchQuery, searchNewsPage)
+                searchNews.postValue(handleSearchNewsResponse(response))
+            } else {
+                searchNews.postValue(Resource.Error("No internet connection"))
+            }
+        } catch(t: Throwable) {
+            when(t) {
+                is IOException -> searchNews.postValue(Resource.Error("Unable to connect"))
+                else -> searchNews.postValue(Resource.Error("No signal"))
+            }
+        }
+    }
+
+    private suspend fun searchNewsByCategory(countryCode: String, categoryName: String) {
+        isSearchByCategory = true
+        searchNews.postValue(Resource.Loading())
+        try {
+            if(internetConnection(this.getApplication())) {
+                val response = newsRepository.getHeadlinesByCategory(countryCode, categoryName, searchNewsPage)
                 searchNews.postValue(handleSearchNewsResponse(response))
             } else {
                 searchNews.postValue(Resource.Error("No internet connection"))
