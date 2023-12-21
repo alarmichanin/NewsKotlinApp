@@ -13,6 +13,7 @@ import com.example.thenewsapp.repository.NewsRepository
 class NewsActivity : AppCompatActivity() {
 
     lateinit var newsViewModel: NewsViewModel
+    lateinit var userViewModel: UserViewModel
     lateinit var binding: ActivityNewsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +24,15 @@ class NewsActivity : AppCompatActivity() {
         val newsRepository = NewsRepository(ArticleDatabase(this))
         val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
         newsViewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+
+        userViewModel.currentUser.observe(this, { firebaseUser ->
+            if (firebaseUser != null) {
+                // Користувач залогінений, відображаємо відповідний UI
+            } else {
+                // Користувач не залогінений, відображаємо UI для логіну/реєстрації
+            }
+        })
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController

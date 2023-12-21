@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="16dp">
 
-    <ImageView
+        <ImageView
             android:id="@+id/profileImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -14,7 +19,7 @@
             android:layout_marginTop="24dp"
             android:src="@drawable/baseline_profile_24" />
 
-    <TextView
+        <TextView
             android:id="@+id/profileNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -26,7 +31,7 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-    <Button
+        <Button
             android:id="@+id/editProfileButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +39,7 @@
             android:layout_marginTop="16dp"
             android:text="Edit profile" />
 
-    <TextView
+        <TextView
             android:id="@+id/favouriteCategoriesTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,10 +50,22 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-    <androidx.recyclerview.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/favouriteCategoriesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp" />
 
-</LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/logoutImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/baseline_logout_24" /> <!-- Replace with your logout icon drawable -->
+
+</RelativeLayout>

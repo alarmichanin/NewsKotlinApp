@@ -3,6 +3,7 @@ package com.example.thenewsapp.ui
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.example.thenewsapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 
@@ -37,7 +38,7 @@ class UserViewModel(app: Application): AndroidViewModel(app) {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     currentUser.value = firebaseAuth.currentUser
-
+                    this.setupLoggedInUI()
                 } else {
                     // Обробка помилок
                 }
@@ -48,10 +49,20 @@ class UserViewModel(app: Application): AndroidViewModel(app) {
         // Вихід користувача
         firebaseAuth.signOut()
         currentUser.value = null
+        this.setupLoginUI()
     }
 
     fun isUserLoggedIn(): Boolean {
-        // Перевірка залогінений користувач чи ні
         return firebaseAuth.currentUser != null
+    }
+
+    private fun setupLoggedInUI() {
+        val navController = findNavController(R.id.newsNavHostFragment)
+        navController.navigate(R.id.profileFragment)
+    }
+
+    private fun setupLoginUI() {
+        val navController = findNavController(R.id.newsNavHostFragment)
+        navController.navigate(R.id.loginFragment)
     }
 }

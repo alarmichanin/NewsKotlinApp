@@ -58,4 +58,10 @@
                 android:id="@+id/action_profileFragment_to_userProfileFragment"
                 app:destination="@id/userProfileFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.thenewsapp.ui.fragments.LoginFragment"
+        android:label="login_fragment"
+        tools:layout="@layout/fragment_login" />
 </navigation>
