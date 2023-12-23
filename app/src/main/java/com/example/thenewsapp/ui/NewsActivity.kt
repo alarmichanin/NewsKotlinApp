@@ -26,16 +26,33 @@ class NewsActivity : AppCompatActivity() {
         newsViewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
         userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
-        userViewModel.currentUser.observe(this, { firebaseUser ->
-            if (firebaseUser != null) {
-                // Користувач залогінений, відображаємо відповідний UI
-            } else {
-                // Користувач не залогінений, відображаємо UI для логіну/реєстрації
-            }
-        })
-
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
+        binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.profileFragment -> {
+                    if (userViewModel.isUserLoggedIn()) {
+                        navController.navigate(R.id.profileFragment)
+                    } else {
+                        navController.navigate(R.id.loginFragment)
+                    }
+                    true
+                }
+                R.id.headlinesFragment->{
+                    navController.navigate(R.id.headlinesFragment)
+                    true
+                }
+                R.id.favouritesFragment->{
+                    navController.navigate(R.id.favouritesFragment)
+                    true
+                }
+                R.id.searchFragment->{
+                    navController.navigate(R.id.searchFragment)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 }

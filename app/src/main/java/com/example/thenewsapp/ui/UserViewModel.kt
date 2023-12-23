@@ -16,30 +16,6 @@ class UserViewModel(app: Application): AndroidViewModel(app) {
         currentUser.value = firebaseAuth.currentUser
     }
 
-    fun register(email: String, password: String) {
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                currentUser.value = firebaseAuth.currentUser
-            } else {
-                // Обробка помилок
-            }
-        }
-    }
-
-    fun login(email: String, password: String) {
-        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                currentUser.value = firebaseAuth.currentUser
-            } else {
-                // Обробка помилок
-            }
-        }
-    }
-
-    fun logout() {
-        firebaseAuth.signOut()
-        currentUser.value = null
-    }
 
     fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null

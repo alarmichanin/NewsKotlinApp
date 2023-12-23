@@ -31,6 +31,17 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/bioTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/poppins"
+            android:text="Bio"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
         <Button
             android:id="@+id/editProfileButton"
             android:layout_width="wrap_content"
