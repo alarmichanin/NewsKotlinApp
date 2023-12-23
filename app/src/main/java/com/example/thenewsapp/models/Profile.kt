@@ -11,5 +11,6 @@ data class Profile @JvmOverloads constructor(
     val username: String = "",
     val email: String = "",
     val bio: String? = null,
-    val profileImageUrl: String? = null
+    val profileImageUrl: String? = null,
+    val categories: List<String> = emptyList()
 ): Serializable
