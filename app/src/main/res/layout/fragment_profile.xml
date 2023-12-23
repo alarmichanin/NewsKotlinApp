@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<ScrollView
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
@@ -42,13 +46,13 @@
             android:textColor="@color/black"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/editProfileButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:text="Edit profile" />
+<!--        <Button-->
+<!--            android:id="@+id/editProfileButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="Edit profile" />-->
 
         <TextView
             android:id="@+id/favouriteCategoriesTitle"
@@ -67,16 +71,49 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/addCategoryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_button_yellow"
+            android:text="Add Category"
+            android:textColor="@color/white" />
 
-    <ImageView
-        android:id="@+id/logoutImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/baseline_logout_24" /> <!-- Replace with your logout icon drawable -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+<!--            <ImageView-->
+<!--                android:id="@+id/ukraineFlagImageView"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/flag_ukraine"  &lt;!&ndash; Потрібно додати це зображення &ndash;&gt;-->
+<!--            android:layout_marginEnd="16dp"/>-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/usFlagImageView"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:src="@drawable/flag_us"  &lt;!&ndash; Потрібно додати це зображення &ndash;&gt;-->
+<!--            android:layout_marginStart="16dp"/>-->
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+
+<ImageView
+    android:id="@+id/logoutImageView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:src="@drawable/baseline_logout_24" /> <!-- Replace with your logout icon drawable -->
 
 </RelativeLayout>
