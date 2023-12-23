@@ -2,73 +2,63 @@ package com.example.thenewsapp.ui.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.webkit.WebViewClient
-import androidx.navigation.fragment.navArgs
+import androidx.navigation.fragment.findNavController
 import com.example.thenewsapp.R
-import com.example.thenewsapp.databinding.FragmentArticleBinding
-import com.example.thenewsapp.ui.NewsActivity
-import com.example.thenewsapp.ui.NewsViewModel
+import com.example.thenewsapp.databinding.FragmentLoginBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.snackbar.Snackbar
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
-    private lateinit var newsViewModel: NewsViewModel
-//    private lateinit var binding: FragmentProfileBinding
+    private var _binding: FragmentLoginBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var auth: FirebaseAuth
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        binding = FragmentProfileBinding.bind(view)
+        _binding = FragmentLoginBinding.bind(view)
+        auth = FirebaseAuth.getInstance()
 
-        newsViewModel = (activity as NewsActivity).newsViewModel
-
-        checkUserAuthentication()
+        setupLoginButton()
+        setupRegisterTextView()
     }
 
-    private fun checkUserAuthentication() {
-//        if (!newsViewModel.isUserLoggedIn()) {
-//            navigateToLogin()
-//        } else {
-//            setupUserProfile()
-//        }
+    private fun setupLoginButton() {
+        binding.loginButton.setOnClickListener {
+            val email = binding.emailEditText.text.toString().trim()
+            val password = binding.passwordEditText.text.toString().trim()
+
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                loginUser(email, password)
+            } else {
+                Snackbar.make(binding.root, "Please fill all fields", Snackbar.LENGTH_LONG).show()
+            }
+        }
     }
 
-    private fun navigateToLogin() {
-        // Перенаправление на экран логина/регистрации
-//        findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+    private fun setupRegisterTextView() {
+        binding.registerTextView.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
     }
 
-//    private fun setupUserProfile() {
-//        // Получение данных пользователя
-//        val userData = newsViewModel.getUserData()
-//
-//        // Отображение данных пользователя
-//        displayUserData(userData)
-//
-//        // Настройка слушателя для кнопки редактирования профиля
-//        setupEditProfileListener()
-//    }
-
-//    private fun displayUserData(userData: UserData) {
-//        // Пример отображения имени пользователя
-//        binding.profileNameTextView.text = userData.name
-//
-//        // Здесь можно добавить отображение другой информации пользователя
-//    }
-
-//    private fun setupEditProfileListener() {
-//        binding.editProfileButton.setOnClickListener {
-//            // Обработчик нажатия на кнопку редактирования профиля
-//            openEditProfile()
-//        }
-//    }
-
-    private fun openEditProfile() {
-        // Перенаправление на фрагмент редактирования профиля или открытие диалогового окна
-        // Например:
-        // findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
+    private fun loginUser(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Login successful, navigate to ProfileFragment or another screen
+                    findNavController().navigate(R.id.action_loginFragment_to_profileFragment)
+                } else {
+                    // Login failed, show error message
+                    Snackbar.make(binding.root, "Login failed: ${task.exception?.message}", Snackbar.LENGTH_LONG).show()
+                }
+            }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

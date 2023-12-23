@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "748398355998",
-    "project_id": "thenewsapp-bce0f",
-    "storage_bucket": "thenewsapp-bce0f.appspot.com"
+    "project_number": "734439284536",
+    "project_id": "thenewsapp-838bc",
+    "storage_bucket": "thenewsapp-838bc.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:748398355998:android:8a531bacb982534846700f",
+        "mobilesdk_app_id": "1:734439284536:android:16116a9d7cbfce9e6e2bcd",
         "android_client_info": {
           "package_name": "com.example.thenewsapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAYTGI7e_7pyfJeKko_uYQQUoJxgCLC8KQ"
+          "current_key": "AIzaSyBLzHN4adVLpzCBovkf9GfVQEFfek3HAKM"
         }
       ],
       "services": {

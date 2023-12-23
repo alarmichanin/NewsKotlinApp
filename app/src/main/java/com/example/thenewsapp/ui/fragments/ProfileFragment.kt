@@ -1,74 +1,48 @@
 package com.example.thenewsapp.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebViewClient
-import androidx.navigation.fragment.navArgs
 import com.example.thenewsapp.R
-import com.example.thenewsapp.databinding.FragmentArticleBinding
-import com.example.thenewsapp.ui.NewsActivity
-import com.example.thenewsapp.ui.NewsViewModel
-import com.google.android.material.snackbar.Snackbar
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.thenewsapp.databinding.FragmentProfileBinding
+import com.google.firebase.auth.FirebaseAuth
 
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
+class ProfileFragment : Fragment() {
 
-    private lateinit var newsViewModel: NewsViewModel
-//    private lateinit var binding: FragmentProfileBinding
+    private var _binding: FragmentProfileBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        binding = FragmentProfileBinding.bind(view)
 
-        newsViewModel = (activity as NewsActivity).newsViewModel
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            // Отримання та відображення інформації про користувача
+            binding.profileNameTextView.text = currentUser.displayName ?: "No Name"
+            // Тут можна додати завантаження даних користувача з Firebase Database
+        }
 
-        checkUserAuthentication()
+        binding.logoutImageView.setOnClickListener {
+            logoutUser()
+        }
     }
 
-    private fun checkUserAuthentication() {
-//        if (!newsViewModel.isUserLoggedIn()) {
-//            navigateToLogin()
-//        } else {
-//            setupUserProfile()
-//        }
+    private fun logoutUser() {
+        FirebaseAuth.getInstance().signOut()
+        findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
     }
 
-    private fun navigateToLogin() {
-        // Перенаправление на экран логина/регистрации
-//        findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
-
-//    private fun setupUserProfile() {
-//        // Получение данных пользователя
-//        val userData = newsViewModel.getUserData()
-//
-//        // Отображение данных пользователя
-//        displayUserData(userData)
-//
-//        // Настройка слушателя для кнопки редактирования профиля
-//        setupEditProfileListener()
-//    }
-
-//    private fun displayUserData(userData: UserData) {
-//        // Пример отображения имени пользователя
-//        binding.profileNameTextView.text = userData.name
-//
-//        // Здесь можно добавить отображение другой информации пользователя
-//    }
-
-//    private fun setupEditProfileListener() {
-//        binding.editProfileButton.setOnClickListener {
-//            // Обработчик нажатия на кнопку редактирования профиля
-//            openEditProfile()
-//        }
-//    }
-
-    private fun openEditProfile() {
-        // Перенаправление на фрагмент редактирования профиля или открытие диалогового окна
-        // Например:
-        // findNavController().navigate(R.id.action_profileFragment_to_editProfileFragment)
-    }
-
 }
+
