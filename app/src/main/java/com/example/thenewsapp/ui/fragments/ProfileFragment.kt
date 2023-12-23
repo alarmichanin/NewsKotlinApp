@@ -1,6 +1,7 @@
 package com.example.thenewsapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,11 +28,11 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        val currentUser = FirebaseAuth.getInstance().currentUser
-//        if (currentUser != null) {
-//            loadUserProfile(currentUser.uid)
-//        }
+        firebaseDatabase = FirebaseDatabase.getInstance()
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            loadUserProfile(currentUser.uid)
+        }
 
         binding.logoutImageView.setOnClickListener {
             logoutUser()
@@ -41,21 +42,22 @@ class ProfileFragment : Fragment() {
     private fun loadUserProfile(userId: String) {
         val userRef = firebaseDatabase.getReference("users").child(userId)
 
-//        userRef.get().addOnSuccessListener { dataSnapshot ->
-//            val profile = dataSnapshot.getValue(Profile::class.java)
-//            if (profile != null) {
-//                binding.profileNameTextView.text = profile.username
-//                binding.bioTextView.text = trimBio(profile.bio)
-//                // Завантаження зображення профілю, якщо воно існує
-//                profile.profileImageUrl?.let { imageUrl ->
-//                    Glide.with(this)
-//                        .load(imageUrl)
-//                        .into(binding.profileImageView)
-//                }
-//            }
-//        }.addOnFailureListener {
-//            Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
-//        }
+        userRef.get().addOnSuccessListener { dataSnapshot ->
+            val profile = dataSnapshot.getValue(Profile::class.java)
+            if (profile != null) {
+                binding.profileNameTextView.text = profile.username
+                binding.bioTextView.text = trimBio(profile.bio)
+                // Завантаження зображення профілю, якщо воно існує
+                profile.profileImageUrl?.let { imageUrl ->
+                    Glide.with(this)
+                        .load(imageUrl)
+                        .into(binding.profileImageView)
+                }
+            }
+        }.addOnFailureListener {exception ->
+            Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
+            Log.e("ProfileFragment", "Error loading profile", exception)
+        }
     }
 
     private fun trimBio(bio: String?): String {
