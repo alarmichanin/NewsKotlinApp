@@ -208,7 +208,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         })
 
         binding.categoriesList.apply {
-            layoutManager = LinearLayoutManager(activity)
+            layoutManager = LinearLayoutManager(activity, RecyclerView.HORIZONTAL, false)
             adapter = categoriesAdapter
         }
     }
