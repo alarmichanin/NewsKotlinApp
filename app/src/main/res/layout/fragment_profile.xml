@@ -21,7 +21,9 @@ android:layout_height="match_parent">
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="24dp"
-            android:src="@drawable/baseline_profile_24" />
+            android:background="@drawable/rounded_image"
+            android:src="@drawable/baseline_profile_24"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/profileNameTextView"
