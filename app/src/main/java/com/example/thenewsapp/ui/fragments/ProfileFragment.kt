@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.thenewsapp.R
 import com.example.thenewsapp.adapters.CategoriesAdapter
@@ -53,7 +53,7 @@ class ProfileFragment : Fragment() {
     private fun setupRecyclerView() {
         categoriesAdapter = CategoriesAdapter(listOf())
         binding.favouriteCategoriesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = categoriesAdapter
         }
     }
