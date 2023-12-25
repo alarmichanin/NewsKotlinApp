@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -16,12 +17,14 @@ import com.example.thenewsapp.adapters.CategoriesAdapter
 import com.example.thenewsapp.databinding.FragmentProfileBinding
 import com.example.thenewsapp.models.Category
 import com.example.thenewsapp.models.Profile
+import com.example.thenewsapp.ui.NewsViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class ProfileFragment : Fragment() {
     private lateinit var firebaseDatabase: FirebaseDatabase
     private var categoriesAdapter: CategoriesAdapter? = null
+    lateinit var newsViewModel: NewsViewModel
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -33,6 +36,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        newsViewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         firebaseDatabase = FirebaseDatabase.getInstance()
         setupRecyclerView()
 
@@ -84,6 +88,7 @@ class ProfileFragment : Fragment() {
 
     private fun logoutUser() {
         FirebaseAuth.getInstance().signOut()
+        newsViewModel.getHeadlines("us")
         findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
     }
 
@@ -117,6 +122,7 @@ class ProfileFragment : Fragment() {
 
         userRef.child("categories").setValue(selectedCategories)
             .addOnSuccessListener {
+                newsViewModel.getHeadlines("us")
                 updateUIWithSelectedCategories(selectedCategories)
             }
             .addOnFailureListener {

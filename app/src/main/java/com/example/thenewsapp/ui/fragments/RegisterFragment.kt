@@ -13,11 +13,13 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.thenewsapp.databinding.FragmentRegistrationBinding
 import com.example.thenewsapp.models.Profile
 import com.google.firebase.auth.FirebaseAuth
 import com.example.thenewsapp.R
+import com.example.thenewsapp.ui.NewsViewModel
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -36,10 +38,12 @@ class RegisterFragment : Fragment(R.layout.fragment_registration) {
     private lateinit var contentPickerLauncher: ActivityResultLauncher<String>
     private var selectedImageUri: Uri? = null
 
+    lateinit var newsViewModel: NewsViewModel
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentRegistrationBinding.bind(view)
-
+        newsViewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         firebaseAuth = FirebaseAuth.getInstance()
         firebaseDatabase = FirebaseDatabase.getInstance()
         firebaseStorage = FirebaseStorage.getInstance()
@@ -107,6 +111,7 @@ class RegisterFragment : Fragment(R.layout.fragment_registration) {
     private fun saveUserProfileToDatabase(profile: Profile) {
         firebaseDatabase.reference.child("users").child(profile.id.toString()).setValue(profile)
             .addOnSuccessListener {
+                newsViewModel.getHeadlines("us")
                 navigateToProfileFragment()
             }
             .addOnFailureListener {

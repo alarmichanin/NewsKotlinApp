@@ -3,9 +3,12 @@ package com.example.thenewsapp.ui.fragments
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.thenewsapp.R
 import com.example.thenewsapp.databinding.FragmentLoginBinding
+import com.example.thenewsapp.ui.NewsViewModel
+import com.example.thenewsapp.ui.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.android.material.snackbar.Snackbar
 
@@ -15,12 +18,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val binding get() = _binding!!
 
     private lateinit var auth: FirebaseAuth
+    lateinit var newsViewModel: NewsViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentLoginBinding.bind(view)
         auth = FirebaseAuth.getInstance()
-
+        newsViewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         setupLoginButton()
         setupRegisterTextView()
     }
@@ -49,6 +53,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Login successful, navigate to ProfileFragment or another screen
+                    newsViewModel.getHeadlines("us")
                     findNavController().navigate(R.id.action_loginFragment_to_profileFragment)
                 } else {
                     // Login failed, show error message
