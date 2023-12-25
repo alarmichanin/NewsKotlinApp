@@ -81,6 +81,9 @@ dependencies {
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.5")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.5")
 
+    //Shimmer
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
     // Glide
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     ksp ("com.github.bumptech.glide:compiler:4.12.0")

@@ -29,6 +29,7 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -63,10 +64,14 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadUserProfile(userId: String) {
+//        val shimmerLayout = binding.shimmerLayout
+//        shimmerLayout.startShimmer()
         val userRef = firebaseDatabase.getReference("users").child(userId)
 
         userRef.get().addOnSuccessListener { dataSnapshot ->
             val profile = dataSnapshot.getValue(Profile::class.java)
+//            shimmerLayout.stopShimmer()
+//            shimmerLayout.visibility = View.VISIBLE
             if (profile != null) {
                 binding.profileNameTextView.text = profile.username
                 binding.bioTextView.text = trimBio(profile.bio)
@@ -77,6 +82,8 @@ class ProfileFragment : Fragment() {
                 updateUIWithSelectedCategories(categories)
             }
         }.addOnFailureListener { exception ->
+//            shimmerLayout.stopShimmer()
+//            shimmerLayout.visibility = View.GONE
             Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
             Log.e("ProfileFragment", "Error loading profile", exception)
         }
