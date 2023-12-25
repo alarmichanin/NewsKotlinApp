@@ -91,7 +91,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
                 }
 
                 headlinesPage++
-                if ((userHasCategories && headlinesPage == 1) || headlinesResponse == null){
+                if (headlinesResponse == null){
                     headlinesResponse = resultResponse.copy(articles = filteredArticles.toMutableList())
                 } else {
                     val oldArticles = headlinesResponse?.articles
@@ -164,6 +164,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
             if(internetConnection(this.getApplication())) {
                 if (categories.isNotEmpty()) {
                     userHasCategories = true
+                    headlinesResponse = null
                     // Fetch news for each category
                     val allArticles = mutableListOf<Article>()
                     var totalResults = 0
@@ -182,6 +183,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
                     if (userHasCategories) {
                         headlinesResponse = null
                         userHasCategories = false
+                        headlinesPage = 1
                     }
 
                     val response = newsRepository.getHeadlines(countryCode, headlinesPage)

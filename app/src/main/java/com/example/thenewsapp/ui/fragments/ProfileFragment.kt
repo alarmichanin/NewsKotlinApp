@@ -2,8 +2,6 @@ package com.example.thenewsapp.ui.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -81,29 +79,23 @@ class ProfileFragment : Fragment() {
         shimmerEnabled = true
         val userRef = firebaseDatabase.getReference("users").child(userId)
 
-        // Імітація довгої загрузки за допомогою затримки
-        val delayMillis = 2000L  // Затримка 2 секунди (змініть потрібний час)
-
-        val handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-            userRef.get().addOnSuccessListener { dataSnapshot ->
-                val profile = dataSnapshot.getValue(Profile::class.java)
-                shimmerEnabled = false
-                if (profile != null) {
-                    binding.profileNameTextView.text = profile.username
-                    binding.bioTextView.text = trimBio(profile.bio)
-                    profile.profileImageUrl?.let { imageUrl ->
-                        Glide.with(this).load(imageUrl).into(binding.profileImageView)
-                    }
-                    val categories = profile.categories ?: listOf()
-                    updateUIWithSelectedCategories(categories)
+        userRef.get().addOnSuccessListener { dataSnapshot ->
+            val profile = dataSnapshot.getValue(Profile::class.java)
+            shimmerEnabled = false
+            if (profile != null) {
+                binding.profileNameTextView.text = profile.username
+                binding.bioTextView.text = trimBio(profile.bio)
+                profile.profileImageUrl?.let { imageUrl ->
+                    Glide.with(this).load(imageUrl).into(binding.profileImageView)
                 }
-            }.addOnFailureListener { exception ->
-                shimmerEnabled = false
-                Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
-                Log.e("ProfileFragment", "Error loading profile", exception)
+                val categories = profile.categories ?: listOf()
+                updateUIWithSelectedCategories(categories)
             }
-        }, delayMillis)
+        }.addOnFailureListener { exception ->
+            shimmerEnabled = false
+            Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
+            Log.e("ProfileFragment", "Error loading profile", exception)
+        }
     }
 
     private fun trimBio(bio: String?): String {
