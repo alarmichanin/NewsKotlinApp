@@ -9,6 +9,9 @@ class NewsRepository(val db: ArticleDatabase) {
     suspend fun getHeadlines(countryCode: String, pageNumber: Int) =
         RetrofitInstance.api.getHeadlines(countryCode, pageNumber)
 
+    suspend fun getHeadlinesWithCategories(countryCode: String, pageNumber: Int, category:String) =
+        RetrofitInstance.api.getHeadlinesByCategory(countryCode, category, pageNumber)
+
     suspend fun searchNews(searchQuery: String, pageNumber: Int) =
         RetrofitInstance.api.searchForNews(searchQuery, pageNumber)
 

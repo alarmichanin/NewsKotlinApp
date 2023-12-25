@@ -11,9 +11,11 @@ class UserViewModel(app: Application): AndroidViewModel(app) {
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
 
     val currentUser: MutableLiveData<FirebaseUser?> = MutableLiveData()
+    val currentUserId: String?
 
     init {
         currentUser.value = firebaseAuth.currentUser
+        currentUserId = firebaseAuth.currentUser?.uid
     }
 
 

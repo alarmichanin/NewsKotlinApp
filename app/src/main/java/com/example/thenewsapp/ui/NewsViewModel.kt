@@ -9,9 +9,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.thenewsapp.models.Article
 import com.example.thenewsapp.models.NewsResponse
+import com.example.thenewsapp.models.Profile
 import com.example.thenewsapp.repository.NewsRepository
 import com.example.thenewsapp.util.Resource
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import retrofit2.Response
 import java.io.IOException
 
@@ -27,12 +31,39 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     var newSearchQuery: String? = null
     var oldSearchQuery: String? = null
 
+    private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var categoryHeadlinesPage = mutableMapOf<String, Int>()
+
     init {
         getHeadlines("us")
     }
 
     fun getHeadlines(countryCode: String) = viewModelScope.launch {
-        headlinesInternet(countryCode)
+        if(firebaseAuth.currentUser != null){
+            val userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                val categories = getUserCategories(userId)
+                categories.forEach { category ->
+                    categoryHeadlinesPage[category] = 1
+                }
+                headlinesInternet(countryCode, categories)
+            }
+        }else{
+            headlinesInternet(countryCode)
+        }
+    }
+
+    suspend fun getUserCategories(userId: String): List<String> {
+        return try {
+            val userRef = firebaseDatabase.getReference("users").child(userId)
+            val dataSnapshot = userRef.get().await()
+            val profile = dataSnapshot.getValue(Profile::class.java)
+            profile?.categories ?: listOf()
+        } catch (e: Exception) {
+            // Log error and return an empty list or handle it as needed
+            listOf()
+        }
     }
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
@@ -115,12 +146,29 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
         }
     }
 
-    private suspend fun headlinesInternet(countryCode: String){
+    private suspend fun headlinesInternet(countryCode: String,categories: List<String> = listOf()){
         headlines.postValue(Resource.Loading())
         try {
             if(internetConnection(this.getApplication())) {
-                val response = newsRepository.getHeadlines(countryCode, headlinesPage)
-                headlines.postValue(handleHeadlinesResponse(response))
+                if (categories.isNotEmpty()) {
+                    // Fetch news for each category
+                    val allArticles = mutableListOf<Article>()
+                    var totalResults = 0
+                    categories.forEach { category ->
+                        val page = categoryHeadlinesPage[category] ?: 1
+                        val response = newsRepository.getHeadlinesWithCategories(countryCode, page, category)
+                        val resource = handleHeadlinesResponse(response)
+                        if (resource is Resource.Success) {
+                            resource.data?.let { allArticles.addAll(it.articles) }
+                            totalResults += resource.data!!.totalResults
+                        }
+                    }
+                    val combinedResponse = NewsResponse(allArticles, "ok", totalResults)
+                    headlines.postValue(Resource.Success(combinedResponse))
+                } else {
+                    val response = newsRepository.getHeadlines(countryCode, headlinesPage)
+                    headlines.postValue(handleHeadlinesResponse(response))
+                }
             } else {
                 headlines.postValue(Resource.Error("No internet connection"))
             }
