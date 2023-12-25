@@ -138,6 +138,7 @@ class RegisterFragment : Fragment(R.layout.fragment_registration) {
                     Toast.makeText(context, "Image size should be less than 1MB", Toast.LENGTH_LONG).show()
                 }
             }
+            showLoadingState(false)
         }
     }
 
