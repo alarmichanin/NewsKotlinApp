@@ -31,6 +31,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
     var isSearchByCategory: Boolean = false
     var newSearchQuery: String? = null
     var oldSearchQuery: String? = null
+    var userHasCategories: Boolean = false
 
     private var firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -90,9 +91,9 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
                 }
 
                 headlinesPage++
-                if (headlinesResponse == null){
+                if ((userHasCategories && headlinesPage == 1) || headlinesResponse == null){
                     headlinesResponse = resultResponse.copy(articles = filteredArticles.toMutableList())
-                } else{
+                } else {
                     val oldArticles = headlinesResponse?.articles
                     oldArticles?.addAll(filteredArticles)
                 }
@@ -162,6 +163,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
         try {
             if(internetConnection(this.getApplication())) {
                 if (categories.isNotEmpty()) {
+                    userHasCategories = true
                     // Fetch news for each category
                     val allArticles = mutableListOf<Article>()
                     var totalResults = 0
@@ -177,6 +179,11 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
                     val combinedResponse = NewsResponse(allArticles, "ok", totalResults)
                     headlines.postValue(Resource.Success(combinedResponse))
                 } else {
+                    if (userHasCategories) {
+                        headlinesResponse = null
+                        userHasCategories = false
+                    }
+
                     val response = newsRepository.getHeadlines(countryCode, headlinesPage)
                     headlines.postValue(handleHeadlinesResponse(response))
                 }
