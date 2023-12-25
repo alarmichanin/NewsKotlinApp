@@ -215,7 +215,7 @@ class NewsViewModel(app: Application, val newsRepository: NewsRepository): Andro
         searchNews.postValue(Resource.Loading())
         try {
             if(internetConnection(this.getApplication())) {
-                val response = newsRepository.getHeadlinesByCategory(countryCode, categoryName, searchNewsPage)
+                val response = newsRepository.getHeadlinesWithCategories(countryCode, searchNewsPage, categoryName)
                 searchNews.postValue(handleSearchNewsResponse(response))
             } else {
                 searchNews.postValue(Resource.Error("No internet connection"))

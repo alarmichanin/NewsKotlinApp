@@ -4,23 +4,30 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent">
 
+<com.facebook.shimmer.ShimmerFrameLayout
+    android:id="@+id/shimmerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <include layout="@layout/fragment_profile_shrimmer"/>
+    </LinearLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>
 
 <ScrollView
+    android:id="@+id/root_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
-<!--    <com.facebook.shimmer.ShimmerFrameLayout-->
-<!--        android:id="@+id/shimmerLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_gravity="center">-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-
-
 
         <ImageView
             android:id="@+id/profileImageView"
@@ -54,14 +61,6 @@ android:layout_height="match_parent">
             android:text="Bio"
             android:textColor="@color/black"
             android:textSize="16sp" />
-
-<!--        <Button-->
-<!--            android:id="@+id/editProfileButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center_horizontal"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:text="Edit profile" />-->
 
         <TextView
             android:id="@+id/favouriteCategoriesTitle"
@@ -97,24 +96,9 @@ android:layout_height="match_parent">
             android:orientation="horizontal"
             android:gravity="center">
 
-<!--            <ImageView-->
-<!--                android:id="@+id/ukraineFlagImageView"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:src="@drawable/flag_ukraine"  &lt;!&ndash; Потрібно додати це зображення &ndash;&gt;-->
-<!--            android:layout_marginEnd="16dp"/>-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/usFlagImageView"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:src="@drawable/flag_us"  &lt;!&ndash; Потрібно додати це зображення &ndash;&gt;-->
-<!--            android:layout_marginStart="16dp"/>-->
-
         </LinearLayout>
 
     </LinearLayout>
-<!--    </com.facebook.shimmer.ShimmerFrameLayout>-->
 </ScrollView>
 
 <ImageView
@@ -125,6 +109,5 @@ android:layout_height="match_parent">
     android:layout_alignParentTop="true"
     android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
-    android:src="@drawable/baseline_logout_24" /> <!-- Replace with your logout icon drawable -->
-
+    android:src="@drawable/baseline_logout_24" />
 </RelativeLayout>

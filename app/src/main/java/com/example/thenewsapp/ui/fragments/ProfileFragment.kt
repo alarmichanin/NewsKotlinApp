@@ -2,6 +2,8 @@ package com.example.thenewsapp.ui.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +30,18 @@ class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+
+    private var shimmerEnabled = true
+        set(value) {
+            field = value
+            if (value) {
+                binding.shimmerLayout.startShimmer()
+            } else {
+                binding.shimmerLayout.stopShimmer()
+            }
+            binding.shimmerLayout.visibility = if (value) View.VISIBLE else View.GONE
+            binding.rootContent.visibility = if (!value) View.VISIBLE else View.GONE
+        }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -64,29 +78,32 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadUserProfile(userId: String) {
-//        val shimmerLayout = binding.shimmerLayout
-//        shimmerLayout.startShimmer()
+        shimmerEnabled = true
         val userRef = firebaseDatabase.getReference("users").child(userId)
 
-        userRef.get().addOnSuccessListener { dataSnapshot ->
-            val profile = dataSnapshot.getValue(Profile::class.java)
-//            shimmerLayout.stopShimmer()
-//            shimmerLayout.visibility = View.VISIBLE
-            if (profile != null) {
-                binding.profileNameTextView.text = profile.username
-                binding.bioTextView.text = trimBio(profile.bio)
-                profile.profileImageUrl?.let { imageUrl ->
-                    Glide.with(this).load(imageUrl).into(binding.profileImageView)
+        // Імітація довгої загрузки за допомогою затримки
+        val delayMillis = 2000L  // Затримка 2 секунди (змініть потрібний час)
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            userRef.get().addOnSuccessListener { dataSnapshot ->
+                val profile = dataSnapshot.getValue(Profile::class.java)
+                shimmerEnabled = false
+                if (profile != null) {
+                    binding.profileNameTextView.text = profile.username
+                    binding.bioTextView.text = trimBio(profile.bio)
+                    profile.profileImageUrl?.let { imageUrl ->
+                        Glide.with(this).load(imageUrl).into(binding.profileImageView)
+                    }
+                    val categories = profile.categories ?: listOf()
+                    updateUIWithSelectedCategories(categories)
                 }
-                val categories = profile.categories ?: listOf()
-                updateUIWithSelectedCategories(categories)
+            }.addOnFailureListener { exception ->
+                shimmerEnabled = false
+                Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
+                Log.e("ProfileFragment", "Error loading profile", exception)
             }
-        }.addOnFailureListener { exception ->
-//            shimmerLayout.stopShimmer()
-//            shimmerLayout.visibility = View.GONE
-            Toast.makeText(context, "Failed to load profile", Toast.LENGTH_LONG).show()
-            Log.e("ProfileFragment", "Error loading profile", exception)
-        }
+        }, delayMillis)
     }
 
     private fun trimBio(bio: String?): String {

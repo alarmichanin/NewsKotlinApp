@@ -23,7 +23,6 @@ import com.example.thenewsapp.util.Constants
 import com.example.thenewsapp.util.Resource
 
 class HeadlinesFragment : Fragment(R.layout.fragment_headlines) {
-
     lateinit var newsViewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
     lateinit var retryButton: Button
@@ -144,12 +143,12 @@ class HeadlinesFragment : Fragment(R.layout.fragment_headlines) {
         }
     }
 
-        private fun setupHeadlinesRecycler(){
-            newsAdapter = NewsAdapter()
-            binding.recyclerHeadlines.apply {
-                adapter = newsAdapter
-                layoutManager = LinearLayoutManager(activity)
-                addOnScrollListener(this@HeadlinesFragment.scrollListener)
+    private fun setupHeadlinesRecycler(){
+        newsAdapter = NewsAdapter()
+        binding.recyclerHeadlines.apply {
+            adapter = newsAdapter
+            layoutManager = LinearLayoutManager(activity)
+            addOnScrollListener(this@HeadlinesFragment.scrollListener)
         }
     }
 }
