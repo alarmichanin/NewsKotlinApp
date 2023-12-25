@@ -13,6 +13,7 @@ import com.example.thenewsapp.repository.NewsRepository
 class NewsActivity : AppCompatActivity() {
 
     lateinit var newsViewModel: NewsViewModel
+    lateinit var userViewModel: UserViewModel
     lateinit var binding: ActivityNewsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,9 +24,35 @@ class NewsActivity : AppCompatActivity() {
         val newsRepository = NewsRepository(ArticleDatabase(this))
         val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
         newsViewModel = ViewModelProvider(this, viewModelProviderFactory).get(NewsViewModel::class.java)
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
+        binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.profileFragment -> {
+                    if (userViewModel.isUserLoggedIn()) {
+                        navController.navigate(R.id.profileFragment)
+                    } else {
+                        navController.navigate(R.id.loginFragment)
+                    }
+                    true
+                }
+                R.id.headlinesFragment->{
+                    navController.navigate(R.id.headlinesFragment)
+                    true
+                }
+                R.id.favouritesFragment->{
+                    navController.navigate(R.id.favouritesFragment)
+                    true
+                }
+                R.id.searchFragment->{
+                    navController.navigate(R.id.searchFragment)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 }
