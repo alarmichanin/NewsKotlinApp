@@ -59,7 +59,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchEdit"
+        app:layout_constraintTop_toBottomOf="@+id/categoriesList"
         tools:layout_editor_absoluteX="0dp" />
 
     <include

@@ -71,12 +71,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 delay(SEARCH_NEWS_TIME_DELAY)
                 editable?.let{
                     if (editable.toString().isNotEmpty()){
-                        binding.recyclerSearch.visibility = View.VISIBLE
                         newsViewModel.searchNews(editable.toString())
-                        binding.categoriesList.visibility = View.GONE
-                    } else {
-                        binding.categoriesList.visibility = View.VISIBLE
-                        binding.recyclerSearch.visibility = View.GONE
                     }
                 }
             }
@@ -186,8 +181,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun setupCategoriesRecycler() {
-        binding.recyclerSearch.visibility = View.GONE
-
         val categories = arrayListOf(
             Category("business", R.drawable.business_24),
             Category("entertainment", R.drawable.baseline_newspaper_24),
@@ -201,8 +194,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         val categoriesAdapter = CategoryAdapter(categories)
         categoriesAdapter.setCategoryClickListener(object : CategoryClickListener {
             override fun onCategoryClick(categoryName: String) {
-                binding.categoriesList.visibility = View.GONE
-                binding.recyclerSearch.visibility = View.VISIBLE
                 newsViewModel.getHeadlinesByCategory("us", categoryName)
             }
         })
